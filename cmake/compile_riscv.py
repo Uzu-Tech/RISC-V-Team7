@@ -59,8 +59,8 @@ def main() -> None:
         "-o", str(object_file), str(assembly_file),
     ])
     run([
-        linker, "-melf32lriscv", "-e", "0xBFC00000",
-        "-Ttext", "0xBFC00000", "-o", str(relocatable_file),
+        linker, "-melf32lriscv", "-e", "0x00000000",
+        "-Ttext", "0x00000000", "-o", str(relocatable_file),
         str(object_file),
     ])
     run([
