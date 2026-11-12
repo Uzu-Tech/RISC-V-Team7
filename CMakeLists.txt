@@ -67,8 +67,7 @@ if(BUILD_TESTING)
                 -LDFLAGS -pthread
             DEPENDS
                 "${TESTBENCH_DIR}/tests/${source}"
-                "${CMAKE_SOURCE_DIR}/testbench/tests/base_testbench.h"
-                "${CMAKE_SOURCE_DIR}/testbench/tests/testbench.h"
+                "${CMAKE_SOURCE_DIR}/testbench/tests/ankit_test_bench.hpp"
                 "${CMAKE_SOURCE_DIR}/rtl/${module}.sv"
             VERBATIM
             COMMENT "Building Verilator test ${test_name}")
@@ -80,6 +79,6 @@ if(BUILD_TESTING)
             WORKING_DIRECTORY "${TESTBENCH_DIR}")
     endfunction()
 
-    add_verilator_test(cpu_test top verify.cpp)
+    add_verilator_test(cpu_test top ankit_verify.cpp)
     add_verilator_test(mux_test mux mux_tb.cpp)
 endif()

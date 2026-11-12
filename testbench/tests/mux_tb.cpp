@@ -1,64 +1,27 @@
-/*
- *  Verifies the results of the mux, exits with a 0 on success.
- */
+#include "ankit_test_bench.hpp"
 
-#include "base_testbench.h"
+#include "Vdut.h"
+#include "gtest/gtest.h"
 
-Vdut *top;
-VerilatedVcdC *tfp;
-unsigned int ticks = 0;
-
-class MuxTestbench : public BaseTestbench
-{
-protected:
-    void initializeInputs() override
-    {
-        top->sel = 0;
-        top->in0 = 0;
-        top->in1 = 0;
-        // output: out
-    }
-};
-
-TEST_F(MuxTestbench, Mux0WorksTest)
-{
-    top->sel = 0;
-    top->in0 = 1;
-    top->in1 = 0;
-
-    top->eval();
-
-    EXPECT_EQ(top->out, 1);
+TEST(MuxTestbench, SelectsInput0) {
+    TestBench::Simulator<Vdut> sim;
+    sim->sel = 0;
+    sim->in0 = 1;
+    sim->in1 = 0;
+    sim.eval();
+    EXPECT_EQ(sim->out, 1u);
 }
 
-TEST_F(MuxTestbench, Mux1WorksTest)
-{
-    top->sel = 1;
-    top->in0 = 0;
-    top->in1 = 1;
-
-    top->eval();
-
-    EXPECT_EQ(top->out, 1);
+TEST(MuxTestbench, SelectsInput1) {
+    TestBench::Simulator<Vdut> sim;
+    sim->sel = 1;
+    sim->in0 = 0;
+    sim->in1 = 1;
+    sim.eval();
+    EXPECT_EQ(sim->out, 1u);
 }
 
-int main(int argc, char **argv)
-{
-    top = new Vdut;
-    tfp = new VerilatedVcdC;
-
-    Verilated::traceEverOn(true);
-    top->trace(tfp, 99);
-    tfp->open("waveform.vcd");
-
+int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);
-    auto res = RUN_ALL_TESTS();
-
-    top->final();
-    tfp->close();
-
-    delete top;
-    delete tfp;
-
-    return res;
+    return RUN_ALL_TESTS();
 }
