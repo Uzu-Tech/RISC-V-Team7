@@ -16,7 +16,7 @@ TEST_TARGETS = {"cpu": "cpu_test", "mux": "mux_test"}
 
 
 def run(command: list[str], cwd: Path = ROOT) -> None:
-    print("$ " + " ".join(str(part) for part in command))
+    print("$ " + " ".join(str(part) for part in command), flush=True)
     subprocess.run(command, cwd=cwd, check=True)
 
 

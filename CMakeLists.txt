@@ -61,8 +61,9 @@ if(BUILD_TESTING)
                 --top-module "${module}"
                 --build
                 -o Vdut
-                -LDFLAGS -lgtest
-                -LDFLAGS -lgtest_main
+                -CFLAGS "-std=c++17 -I$<JOIN:$<TARGET_PROPERTY:GTest::gtest,INTERFACE_INCLUDE_DIRECTORIES>, -I>"
+                -LDFLAGS "$<TARGET_FILE:GTest::gtest_main>"
+                -LDFLAGS "$<TARGET_FILE:GTest::gtest>"
                 -LDFLAGS -pthread
             DEPENDS
                 "${TESTBENCH_DIR}/tests/${source}"
