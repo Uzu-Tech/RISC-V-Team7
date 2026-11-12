@@ -22,7 +22,7 @@ if(BUILD_PROGRAM)
     endif()
     get_filename_component(PROGRAM_NAME "${PROGRAM_SOURCE}" NAME_WE)
     set(PROGRAM_HEX "${CMAKE_BINARY_DIR}/program.hex")
-    set(PROGRAM_DIS "${CMAKE_SOURCE_DIR}/${PROGRAM_NAME}.dis")
+    set(PROGRAM_DIS "${CMAKE_SOURCE_DIR}/testbench/${PROGRAM_NAME}.dis")
     add_custom_command(
         OUTPUT "${PROGRAM_HEX}" "${PROGRAM_DIS}"
         COMMAND "${Python3_EXECUTABLE}"
@@ -76,7 +76,7 @@ if(BUILD_TESTING)
         add_test(
             NAME "${test_name}"
             COMMAND "${executable}"
-            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+            WORKING_DIRECTORY "${TESTBENCH_DIR}")
     endfunction()
 
     add_verilator_test(cpu_test top verify.cpp)

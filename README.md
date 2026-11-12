@@ -2,10 +2,11 @@
 
 ## Build
 
-Install CMake, Python 3, Verilator, a RISC-V GNU toolchain
-(`riscv64-unknown-elf-*`), and GoogleTest using your operating system's
-package manager. CMake cannot install the simulator or cross-compiler
-automatically, so the interface reports a clear error if one is missing.
+`build.py` automatically installs missing dependencies on Debian/Ubuntu using
+`apt-get` or on macOS using Homebrew. It may ask for administrator
+authentication. Use `--no-install` to disable this behavior. Other systems
+must provide CMake, Python 3, Verilator, a RISC-V GNU toolchain
+(`riscv64-unknown-elf-*`), and GoogleTest themselves.
 
 The recommended interface is `build.py`. It works from macOS, Linux, and
 Windows WSL because it uses Python to call CMake:
@@ -42,9 +43,8 @@ ctest --test-dir build --output-on-failure -R mux_test
 ```
 
 Generated program files are placed in `build/`, except for the disassembly
-output, which is written to the repository root. Test waveform output
-(`waveform.vcd`) is also written to the repository root. The RISC-V conversion
-is implemented in the
+output and test waveform output (`waveform.vcd`), which are written to
+`testbench/`. The RISC-V conversion is implemented in the
 cross-platform standard-library helper
 `cmake/compile_riscv.py`. The older Bash wrapper remains available for direct
 use on Unix-like systems with
