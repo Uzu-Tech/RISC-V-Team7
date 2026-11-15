@@ -15,7 +15,7 @@ module instr_mem(
     };
 
     initial begin
-        $readmemh("../build/program.hex", mem);
+        $readmemh("../rtl/program.hex", mem);
     end
 
 endmodule

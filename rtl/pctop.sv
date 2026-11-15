@@ -15,10 +15,9 @@ module pctop #(
     assign branch_PC = PC + immOp;
     assign next_PC = pcsrc ? branch_PC : inc_PC;
 
-    pcreg pcreg_1#
-    (
+    pcreg #(
         .DATA_WIDTH(DATA_WIDTH)
-    )
+    ) pcreg_1
     (
         .clk (clk),
         .rst (rst),

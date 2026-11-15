@@ -1,16 +1,27 @@
-import types::*;
-
 module alu #(
     parameter int DATA_WIDTH = 32
 ) (
-    input  alu_ctrl_t              ALU_Ctrl,
+    input  logic [3:0]              ALU_Ctrl,
     input  logic [DATA_WIDTH-1:0]  ALU_op1,
     input  logic [DATA_WIDTH-1:0]  ALU_op2,
     output logic [DATA_WIDTH-1:0]  ALU_out
 );
 
+    typedef enum logic [3:0] {
+        ALU_ADD,
+        ALU_SUB,
+        ALU_AND,
+        ALU_OR,
+        ALU_XOR,
+        ALU_SLL,
+        ALU_SRL,
+        ALU_SRA,
+        ALU_SLT,
+        ALU_SLTU
+    } alu_ctrl_t;
+
     always_comb begin
-        case (ALU_Ctrl)
+        case (alu_ctrl_t'(ALU_Ctrl))
             ALU_ADD:  ALU_out = ALU_op1 + ALU_op2;
             ALU_SUB:  ALU_out = ALU_op1 - ALU_op2;
             ALU_AND:  ALU_out = ALU_op1 & ALU_op2;

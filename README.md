@@ -22,7 +22,7 @@ Other useful commands are:
 python3 build.py compile
 python3 build.py test
 python3 build.py test --test mux
-python3 build.py test --test cpu
+python3 build.py test --test top
 python3 build.py all --test mux
 python3 build.py compile --program testbench/c/return_5.c
 python3 build.py clean
@@ -42,9 +42,9 @@ cmake --build build --target program mux_test
 ctest --test-dir build --output-on-failure -R mux_test
 ```
 
-Generated program files are placed in `build/`, except for the disassembly
-output and test waveform output (`waveform.vcd`), which are written to
-`testbench/`. The RISC-V conversion is implemented in the
+Generated program files are placed in `build/`, except for the instruction
+memory image (`rtl/program.hex`), disassembly output, and test waveform output
+(`waveform.vcd`). The RISC-V conversion is implemented in the
 cross-platform standard-library helper
 `cmake/compile_riscv.py`. The older Bash wrapper remains available for direct
 use on Unix-like systems with

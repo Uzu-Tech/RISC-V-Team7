@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <type_traits>
+#include <concepts>
 
 #include "verilated.h"
 #include "verilated_vcd_c.h"
@@ -55,8 +57,7 @@ public:
         ++cycles_;
     }
 
-    template <typename Check>
-    void run(std::size_t cycles, Check&& check) {
+    void run(std::size_t cycles, std::invocable<size_t> auto&& check) {
         for (std::size_t i = 0; i < cycles && !Verilated::gotFinish(); ++i) {
             tick();
             check(i);

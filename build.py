@@ -12,9 +12,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_BUILD_DIR = ROOT / "build"
-TEST_TARGETS = {"cpu": "cpu_test", "mux": "mux_test"}
-
-
 def run(command: list[str], cwd: Path = ROOT) -> None:
     print("$ " + " ".join(str(part) for part in command), flush=True)
     subprocess.run(command, cwd=cwd, check=True)
@@ -135,8 +132,8 @@ def cmake_configure(args: argparse.Namespace, build_dir: Path, build_program: bo
 
 def selected_tests(value: str) -> list[str]:
     if value == "all":
-        return list(TEST_TARGETS.values())
-    return [TEST_TARGETS[value]]
+        return ["tests"]
+    return [f"{value}_test"]
 
 
 def main() -> int:
@@ -153,8 +150,8 @@ def main() -> int:
         help="C or assembly program to compile instead of the default program",
     )
     parser.add_argument(
-        "--test", choices=("all", "cpu", "mux"), default="all",
-        help="testbench to build/run (default: all)",
+        "--test", default="all",
+        help="testbench module to build/run, or all (default: all)",
     )
     parser.add_argument(
         "--build-dir", type=Path, default=DEFAULT_BUILD_DIR,
@@ -196,8 +193,10 @@ def main() -> int:
     if args.action in {"test", "all"}:
         targets = selected_tests(args.test)
         run(["cmake", "--build", str(build_dir), "--target", *targets])
-        run(["ctest", "--test-dir", str(build_dir), "--output-on-failure",
-             "-R", "|".join(targets)])
+        command = ["ctest", "--test-dir", str(build_dir), "--output-on-failure"]
+        if args.test != "all":
+            command.extend(["-R", f"^{args.test}_test$"])
+        run(command)
 
     return 0
 

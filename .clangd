@@ -1,0 +1,25 @@
+CompileFlags:
+  Add:
+    - -std=c++20
+    - -I../../build/testbenches/top_test
+    - -I../../build/testbenches/mux_test
+    - -I/usr/share/verilator/include
+    - -D__builtin_popcountg=__builtin_popcount
+
+---
+If:
+  PathMatch: testbench/tests/top_tb.cpp
+CompileFlags:
+  Remove:
+    - -I../../build/testbenches/top_test
+    - -I../../build/testbenches/mux_test
+  Add: [-I../../build/testbenches/top_test]
+
+---
+If:
+  PathMatch: testbench/tests/mux_tb.cpp
+CompileFlags:
+  Remove:
+    - -I../../build/testbenches/top_test
+    - -I../../build/testbenches/mux_test
+  Add: [-I../../build/testbenches/mux_test]

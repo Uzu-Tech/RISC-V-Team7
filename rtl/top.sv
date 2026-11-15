@@ -26,7 +26,7 @@ module top #(
     logic [DATA_WIDTH-1:0]   ALUop2;
     
     logic             RegWrite;
-    logic [2:0]       ALUctrl;
+    logic [3:0]       ALUctrl;
     logic             ALUsrc;
     logic [1:0]       ImmSrc;
     logic             PCsrc;

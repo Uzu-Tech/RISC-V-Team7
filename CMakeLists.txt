@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.20)
 
 project(risc_v_team7 LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 include(CTest)
 
 option(BUILD_PROGRAM "Build the RISC-V program image" ON)
@@ -21,7 +24,7 @@ if(BUILD_PROGRAM)
         message(FATAL_ERROR "PROGRAM_SOURCE does not exist: ${PROGRAM_SOURCE}")
     endif()
     get_filename_component(PROGRAM_NAME "${PROGRAM_SOURCE}" NAME_WE)
-    set(PROGRAM_HEX "${CMAKE_BINARY_DIR}/program.hex")
+    set(PROGRAM_HEX "${CMAKE_SOURCE_DIR}/rtl/program.hex")
     set(PROGRAM_DIS "${CMAKE_SOURCE_DIR}/testbench/${PROGRAM_NAME}.dis")
     add_custom_command(
         OUTPUT "${PROGRAM_HEX}" "${PROGRAM_DIS}"
@@ -44,8 +47,13 @@ if(BUILD_TESTING)
 
     set(TESTBENCH_DIR "${CMAKE_SOURCE_DIR}/testbench")
     set(TEST_BUILD_DIR "${CMAKE_BINARY_DIR}/testbenches")
+    file(GLOB RTL_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/rtl/*.sv")
+    file(GLOB TEST_SOURCES CONFIGURE_DEPENDS "${TESTBENCH_DIR}/tests/*_tb.cpp")
 
-    function(add_verilator_test test_name module source)
+    function(add_verilator_test source)
+        get_filename_component(source_name "${source}" NAME_WE)
+        string(REGEX REPLACE "_tb$" "" module "${source_name}")
+        set(test_name "${module}_test")
         set(mdir "${TEST_BUILD_DIR}/${test_name}")
         set(executable "${mdir}/Vdut")
 
@@ -53,32 +61,35 @@ if(BUILD_TESTING)
             OUTPUT "${executable}"
             COMMAND "${CMAKE_COMMAND}" -E make_directory "${mdir}"
             COMMAND "${VERILATOR_EXECUTABLE}"
-                --cc --trace --Wall -Wno-fatal
-                --exe "${TESTBENCH_DIR}/tests/${source}"
-                "${CMAKE_SOURCE_DIR}/rtl/${module}.sv"
+                --cc --trace --Wall -Wno-fatal -Wno-EOFNEWLINE
+                --exe "${source}"
+                ${RTL_SOURCES}
                 --Mdir "${mdir}"
                 --prefix Vdut
                 --top-module "${module}"
                 --build
                 -o Vdut
-                -CFLAGS "-std=c++17 -I$<JOIN:$<TARGET_PROPERTY:GTest::gtest,INTERFACE_INCLUDE_DIRECTORIES>, -I>"
+                -CFLAGS "-std=c++20 -I$<JOIN:$<TARGET_PROPERTY:GTest::gtest,INTERFACE_INCLUDE_DIRECTORIES>, -I>"
                 -LDFLAGS "$<TARGET_FILE:GTest::gtest_main>"
                 -LDFLAGS "$<TARGET_FILE:GTest::gtest>"
                 -LDFLAGS -pthread
             DEPENDS
-                "${TESTBENCH_DIR}/tests/${source}"
-                "${CMAKE_SOURCE_DIR}/testbench/tests/ankit_test_bench.hpp"
-                "${CMAKE_SOURCE_DIR}/rtl/${module}.sv"
+                "${source}"
+                "${CMAKE_SOURCE_DIR}/testbench/tests/test_bench.hpp"
+                ${RTL_SOURCES}
             VERBATIM
             COMMENT "Building Verilator test ${test_name}")
 
         add_custom_target("${test_name}" DEPENDS "${executable}")
+        set(TEST_TARGETS "${TEST_TARGETS};${test_name}" PARENT_SCOPE)
         add_test(
             NAME "${test_name}"
             COMMAND "${executable}"
             WORKING_DIRECTORY "${TESTBENCH_DIR}")
     endfunction()
 
-    add_verilator_test(cpu_test top ankit_verify.cpp)
-    add_verilator_test(mux_test mux mux_tb.cpp)
+    foreach(test_source IN LISTS TEST_SOURCES)
+        add_verilator_test("${test_source}")
+    endforeach()
+    add_custom_target(tests DEPENDS ${TEST_TARGETS})
 endif()

@@ -1,4 +1,4 @@
-#include "ankit_test_bench.hpp"
+#include "test_bench.hpp"
 
 #include "Vdut.h"
 #include "gtest/gtest.h"
