@@ -7,8 +7,17 @@ module top #(
     output  logic [DATA_WIDTH-1:0] a0    
 );
 
+    typedef struct packed {
+        logic [6:0]  funct7;
+        logic [4:0]  rs2;
+        logic [4:0]  rs1;
+        logic [2:0]  funct3;
+        logic [4:0]  rd;
+        logic [6:0]  opcode;
+    } instruction_t;
+
     logic [DATA_WIDTH-1:0] PC;
-    logic [DATA_WIDTH-1:0] instr;
+    instruction_t instr;
     logic [DATA_WIDTH-1:0] ImmOp;
     logic [DATA_WIDTH-1:0] ALUout;
 
@@ -37,8 +46,8 @@ module top #(
     );
 
     control_unit u_control_unit(
-        .opcode (instr[6:0]),
-        .funct3 (instr[14:12]),
+        .opcode (instr.opcode),
+        .funct3 (instr.funct3),
         .eq(EQ),
         .reg_write(RegWrite),
         .alu_src(ALUsrc),
@@ -58,9 +67,9 @@ module top #(
     ) u_regfile
     (
         .clk(clk),
-        .read_addr1(instr[19:15]),
-        .read_addr2(instr[24:20]),
-        .write_addr(instr[11:7]),
+        .read_addr1(instr.rs1),
+        .read_addr2(instr.rs2),
+        .write_addr(instr.rd),
         .write_en(RegWrite),
         .write_data(ALUout),
         .read_data1(ALUop1),
