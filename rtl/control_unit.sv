@@ -5,7 +5,7 @@ module control_unit (
     output logic reg_write,
     output logic alu_src,
     output logic [3:0] alu_ctrl,
-    output logic imm_src,
+    output logic [1:0] imm_src,
     output logic pc_src
 );
 
@@ -14,7 +14,7 @@ module control_unit (
         reg_write = 1'b0; //disable register write by default
         alu_src = 1'b0; // use register value as second ALU operand by default
         alu_ctrl = 4'b0000; // default ALU operation (ADD)
-        imm_src = 1'b0; // use register value as immediate by default
+        imm_src = 2'b00; // I-type immediate by default
         pc_src = 1'b0; // select squaential next PC
 
         case (opcode)
@@ -29,7 +29,7 @@ module control_unit (
             7'b1100011: begin // B-type - Branch instructions - branch if not equal (BNE)
                 if (funct3 == 3'b001) begin //BNE
                     //BNE: override the two required outputs
-                    imm_src = 1'b1; // use B-type immediate value as second ALU operand
+                    imm_src = 2'b01; // use B-type immediate value as second ALU operand
                     pc_src = ~eq; // select branch target address if not equal
                     alu_ctrl = 4'b0001; // set ALU control to perform subtraction for comparison - CHECK IF SUB is 0 or 1 or 2 or 3!!!!
                 end
@@ -39,7 +39,7 @@ module control_unit (
                 reg_write = 1'b0;
                 alu_src = 1'b0;
                 alu_ctrl = 4'b0000;
-                imm_src = 1'b0;
+                imm_src = 2'b00;
                 pc_src = 1'b0;
             end
         endcase

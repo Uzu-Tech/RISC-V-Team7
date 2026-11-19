@@ -63,7 +63,8 @@ module top #(
     );
 
     regfile #(
-        .DATA_WIDTH(DATA_WIDTH)
+        .DATA_WIDTH(DATA_WIDTH),
+        .ADDRESS_WIDTH(ADDRESS_WIDTH)
     ) u_regfile
     (
         .clk(clk),
