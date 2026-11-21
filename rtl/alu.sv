@@ -16,9 +16,9 @@ module alu #(
             ALU_AND:  ALU_out = ALU_op1 & ALU_op2;
             ALU_OR:   ALU_out = ALU_op1 | ALU_op2;
             ALU_XOR:  ALU_out = ALU_op1 ^ ALU_op2;
-            ALU_SLL:  ALU_out = ALU_op1 << ALU_op2;
-            ALU_SRL:  ALU_out = ALU_op1 >> ALU_op2;
-            ALU_SRA:  ALU_out = $signed(ALU_op1) >>> ALU_op2;
+            ALU_SLL:  ALU_out = ALU_op1 << ALU_op2[4:0]; // Shift left logical - bottom 5 bits are the actual shift amount in RISC-V
+            ALU_SRL:  ALU_out = ALU_op1 >> ALU_op2[4:0]; // Shift right logical
+            ALU_SRA:  ALU_out = $signed(ALU_op1) >>> ALU_op2[4:0]; // Shift right arithmetic
             ALU_SLT:  ALU_out = ($signed(ALU_op1) < $signed(ALU_op2)) ? 1 : 0;
             ALU_SLTU: ALU_out = (ALU_op1 < ALU_op2) ? 1 : 0;
             default:  ALU_out = '0;
