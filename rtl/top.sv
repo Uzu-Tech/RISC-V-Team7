@@ -1,3 +1,25 @@
+/*
+COURSEWORK OUTLINE - storage integration (coordinate with the team)
+
+The three storage modules live in instr_mem.sv, data_mem.sv, and regfile.sv.
+Their connections belong here; existing code below is retained unchanged.
+
+To connect once those modules and the team's control signals are ready:
+  1. Keep PC -> instruction memory -> instruction decoding.
+  2. Add a data_mem instance: ALU result -> memory address, register-file rs2
+     (regOp2) -> store data, control-unit store enable -> memory write enable.
+  3. Route load data into a writeback selection alongside the ALU result and
+     the jump return address. Feed the selected value to regfile.write_data;
+     the current connection below always writes ALUout.
+  4. Coordinate load/store controls and writeback selection with the control
+     unit owner; ensure stores do not write a destination register.
+  5. Coordinate PC reset/linker address with the instruction-memory mapping.
+  6. For compatibility with the supplied coursework testbench, the top-level
+     interface needs clk, rst, trigger inputs and a 32-bit a0 output. The
+     current interface below does not yet include trigger.
+
+This is an integration checklist, not new datapath implementation.
+*/
 module top #(
     parameter DATA_WIDTH = 32,
     parameter ADDRESS_WIDTH = 5
